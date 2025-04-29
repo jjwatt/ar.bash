@@ -125,12 +125,28 @@ ar::insert() {
     }
     local -n arr="$1"
     local -i index="$2"
+    local item="$3"
     if ! [[ $index =~ ^-?[0-9]+$ ]]; then
 	echo "Error: index must be an integer" >&2
 	return 2
     fi
-    local item="$3"
 
+    local arr_len="${#arr[@]}"
+
+    # Handle negative indexing like Python.
+    if (( index < 0 )); then
+	index=$(( arr_len + index ))
+	# If it's still negative, insert at beginning.
+	# I think this is what Python does.
+	if (( index < 0 )); then
+	    index=0
+	fi
+    fi
+    # Like Python, see if it goes over arr_len,
+    # and just insert at the end if it does.
+    if (( index > arr_len )); then
+	index=arr_len
+    fi
     local -a pre=("${arr[@]:0:$index}")
     local -a post=("${arr[@]:$((index))}")
     arr=("${pre[@]}" "$item" "${post[@]}")
