@@ -119,13 +119,22 @@ ar::extend() {
 ## @param index The index of the element before which to insert
 ## @param item The item to insert
 ar::insert() {
+    (( $# != 3 )) && {
+	echo "$FUNCNAME: usage: $FUNCNAME arrayname index item" >&2
+	return 2
+    }
     local -n arr="$1"
     local -i index="$2"
+    if ! [[ $index =~ ^-?[0-9]+$ ]]; then
+	echo "Error: index must be an integer" >&2
+	return 2
+    fi
     local item="$3"
 
     local -a pre=("${arr[@]:0:$index}")
-    local -a post=("${arr[@]:$((index + 1))}")
+    local -a post=("${arr[@]:$((index))}")
     arr=("${pre[@]}" "$item" "${post[@]}")
+    return 0
 }
 
 
