@@ -45,7 +45,6 @@ ar::append() {
 ## @brief Removes and returns the last element of an array
 ## @param arrayname The name of the array to pop from
 ar::pop1() {
-    # TODO(jjwatt): Support numeric argument to pop for that index
     (( $# != 1 )) && {
 	"$FUNCNAME: usage: $FUNCNAME arrayname"
 	return 2
@@ -112,6 +111,23 @@ ar::extend() {
     local -n arr2="$2"
     arr=("${arr[@]}" "${arr2[@]}")
 }
+
+
+## @fn ar::insert()
+## @brief Insert an item at given position
+## @param arrayname The name of the array to act on
+## @param index The index of the element before which to insert
+## @param item The item to insert
+ar::insert() {
+    local -n arr="$1"
+    local -i index="$2"
+    local item="$3"
+
+    local -a pre=("${arr[@]:0:$index}")
+    local -a post=("${arr[@]:$((index + 1))}")
+    arr=("${pre[@]}" "$item" "${post[@]}")
+}
+
 
 ## @fn ar::reverse()
 ## @brief Reverse array stored in arr in-place
