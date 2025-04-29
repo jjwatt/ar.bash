@@ -100,7 +100,7 @@ ar::pop() {
 
 ## @fn ar::extend()
 ## @brief Extend the first array by appending all items from the second array
-## @detail Like Python's list.extend()
+## @detail Like Python's list.extend(). The first array is modified in-place.
 ## Usage: ar:extend array1 array2
 ar::extend() {
     (( $# < 2 )) && {
@@ -109,7 +109,9 @@ ar::extend() {
     }
     local -n arr="$1"
     local -n arr2="$2"
-    arr=("${arr[@]}" "${arr2[@]}")
+    for item in "${arr2[@]}"; do
+	arr+=( "$item" )
+    done
 }
 
 
