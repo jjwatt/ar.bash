@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+BATSDIR=bats
+TEST_HELPER_DIR=test_helper
+
+[[ -d $BATSDIR ]] || {
+    git clone https://github.com/bats-core/bats-core.git \
+			 bats \
+	&& rm -rf "$BATSDIR"/.git
+}
+
+[[ -d $TEST_HELPER_DIR ]] || {
+    mkdir -p "$TEST_HELPER_DIR" \
+	&& git clone https://github.com/bats-core/bats-support.git \
+	       test_helper/bats-support \
+	&& rm -rf "$TEST_HELPER_DIR"/bats-support/.git
+}
+
+[[ -d $TEST_HELPER_DIR ]] || {
+    mkdir -p "$TEST_HELPER_DIR" \
+	&& git clone https://github.com/bats-core/bats-assert.git \
+	       test_helper/bats-assert \
+	&& rm -rf "$TEST_HELPER_DIR"/bats-assert/.git
+}
+
