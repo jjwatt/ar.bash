@@ -38,6 +38,22 @@ setup() {
     done    
 }
 
+@test "ar::index returns the index for the first occurence of value" {
+    local i
+    i="$(ar::index _starting_array sausage)"
+    [[ $i -eq 2 ]]
+}
+
+@test "ar::index returns 1 if the value is not in the array" {
+    run ar::index _starting_array beef
+    [[ $status -eq 1 ]]
+}
+
+@test "ar::index returns non-zero if an array index is out of bounds" {
+    run ar::index _starting_array rice 4
+    [[ $status -eq 2 ]]
+}
+
 @test "ar::remove removes the first occurence of value from the array" {
     ar::remove _starting_array rice
     [[ "${_starting_array[*]}" == "beans sausage" ]]
