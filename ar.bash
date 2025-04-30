@@ -249,6 +249,32 @@ ar::remove() {
     return 0
 }
 
+ar::clear() {
+    local -n arr="$1"
+    arr=()
+}
+
+## @fn ar::count()
+## @brief Return the number of times value appears in the array
+## @detail Like Python's list.count(x)
+## Usage: ar::count arrayname
+ar::count() {
+    local -n arr="$1"
+    local needle="$2"
+    local -i count=0
+    
+    # Simple linear search
+    for value in "${arr[@]}"; do
+	if [[ $value == $needle ]]; then
+	   (( count++ ))
+	fi
+    done
+    if (( count == 0 )); then
+	echo 0
+	return 1
+    fi	
+    echo "$count"
+}
 
 ## @fn ar::reverse()
 ## @brief Reverse array stored in arr in-place
