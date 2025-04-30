@@ -262,7 +262,7 @@ ar::count() {
     local -n arr="$1"
     local needle="$2"
     local -i count=0
-    
+
     # Simple linear search
     for value in "${arr[@]}"; do
 	if [[ $value == $needle ]]; then
@@ -272,7 +272,7 @@ ar::count() {
     if (( count == 0 )); then
 	echo 0
 	return 1
-    fi	
+    fi
     echo "$count"
 }
 
@@ -310,7 +310,7 @@ ar::array_to_string() {
     }
     local array=$1 string=$2
     (($#==3)) && [[ $3 = ? ]] && local IFS="${3}${IFS}"
-    
+
     eval $string="\"\${$array[*]}\""
     return 0
 }
@@ -332,4 +332,3 @@ ar::string_to_array() {
     eval read -ra "$array" <<< "${!string}"
     return 0
 }
-
