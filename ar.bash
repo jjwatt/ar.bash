@@ -37,9 +37,15 @@ ar::push() {
     arr+=("$@")
 }
 
+
+## @fn ar::append()
+## @brief Appends remaining arguments to array name
+## @param arrayname The name of the array to push onto
+## @param rest val1 [val2 {...} ] Values to push onto the array
 ar::append() {
     ar::push "$@"
 }
+
 
 ## @fn ar::pop1()
 ## @brief Removes and returns the last element of an array
@@ -61,6 +67,7 @@ ar::pop1() {
     arr=("${arr[@]:0:$i}")
     echo "$popped"
 }
+
 
 ## @fn ar::pop()
 ## @brief Removes and returns one element (defaults to last)
@@ -97,6 +104,7 @@ ar::pop() {
     arr=("${pre[@]}" "${post[@]}")
     echo "$popped"
 }
+
 
 ## @fn ar::extend()
 ## @brief Extend the first array by appending all items from the second array
@@ -156,6 +164,70 @@ ar::insert() {
 }
 
 
+## @fn ar::remove()
+## @brief Remove the first occurrence of value from array
+## @detail Like Python's list.remove(x)
+## Usage: ar::remove arrayname value
+ar::remove() {
+    echo "TBD" >&2
+}
+
+
+## @fn ar::index()
+## @brief Return the index of the first item in array whose needle is equal to the given value.
+## @detail Like Python's list.index(x[, start[, end]])
+## Usage: ar::index arrayname needle [start [end]]
+ar::index() {
+    local -n arr="$1"
+    local needle="$2"
+    local start="${3:-0}"
+    local end="$4"
+    local -i arr_len="${#arr[@]}"
+
+    (( $# < 2 || $# > 4)) && {
+	echo "$FUNCNAME: usage: $FUNCNAME arrayname needle [start [end]]" >&2
+	return 2
+    }
+
+    # Try to treat negative indexes the way Python does.
+    if (( start < 0 )); then
+	start=$((arr_len + start))
+	if (( start < 0 )); then
+	    start=0
+	fi
+    fi
+
+    if [[ -n $end  && $end -lt 0 ]]; then
+	end=$((arr_len + end))
+    fi
+
+    # Set default end if not provided.
+    [[ -z $end ]] && end="$arr_len"
+
+    # Make sure start and end are within bounds.
+    if (( start < 0 || start > arr_len )); then
+	echo "Value error: substring index out of range" >&2
+	return 1
+    fi
+    if (( end < 0 || end > arr_len )); then
+	echo "Value error: substring index out of range" >&2
+	return 1
+    fi
+
+    # Iterate through the specified range.
+    for ((i=start; i < end; i++)); do
+	if [[ ${arr[$i]} == $needle ]]; then
+	    echo "$i"
+	    return 0
+	fi
+    done
+
+    # We didn't find the needle
+    echo "Value error: '$needle' not found" >&2
+    return 1
+}
+
+
 ## @fn ar::reverse()
 ## @brief Reverse array stored in arr in-place
 ## @detail My simplification of Chris Ramey's reverse from bash examples
@@ -177,6 +249,7 @@ ar::reverse() {
     done
 }
 
+
 # @fn array_to_string
 # @brief Turn an array into a string with seperator
 # @param vname_of_array The variable name of the array
@@ -193,6 +266,7 @@ ar::array_to_string() {
     eval $string="\"\${$array[*]}\""
     return 0
 }
+
 
 # @fn string_to_array
 # @brief Turn a string into an array with a specified delimiter
