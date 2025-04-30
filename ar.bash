@@ -8,6 +8,8 @@
 
 ## @fn ar:shift()
 ## @brief Like shift, but for arrays
+## @detail Remove n items from the end of the array
+## @param arrayname [n]
 ar::shift() {
     local -n arr="$1"
     local -i n
@@ -164,15 +166,6 @@ ar::insert() {
 }
 
 
-## @fn ar::remove()
-## @brief Remove the first occurrence of value from array
-## @detail Like Python's list.remove(x)
-## Usage: ar::remove arrayname value
-ar::remove() {
-    echo "TBD" >&2
-}
-
-
 ## @fn ar::index()
 ## @brief Return the index of the first item in array whose needle is equal to the given value.
 ## @detail Like Python's list.index(x[, start[, end]])
@@ -207,16 +200,16 @@ ar::index() {
     # Make sure start and end are within bounds.
     if (( start < 0 || start > arr_len )); then
 	echo "Value error: substring index out of range" >&2
-	return 1
+	return 2
     fi
     if (( end < 0 || end > arr_len )); then
 	echo "Value error: substring index out of range" >&2
-	return 1
+	return 2
     fi
 
     # Iterate through the specified range.
     for ((i=start; i < end; i++)); do
-	if [[ ${arr[$i]} == $needle ]]; then
+	if [[ ${arr[$i]} == "$needle" ]]; then
 	    echo "$i"
 	    return 0
 	fi
@@ -225,6 +218,35 @@ ar::index() {
     # We didn't find the needle
     echo "Value error: '$needle' not found" >&2
     return 1
+}
+
+
+## @fn ar::remove()
+## @brief Remove the first occurrence of value from array
+## @detail Like Python's list.remove(x)
+## Usage: ar::remove arrayname value
+ar::remove() {
+    local -n arr="$1"
+    local needle="$2"
+    local -i arr_len="${#arr[@]}"
+
+    (( $# != 2 )) && {
+	echo "$FUNCNAME: usage: $FUNCNAME arrayname value" >&2
+	return 2
+    }
+
+    local -i remove_index
+    remove_index="$(ar::index "$1" "$needle")"
+    # If needle is not in the array, ar::index will return non-zero
+    ret="$?"
+    if ! ((ret == 0)); then
+	return "$ret"
+    fi
+
+    local -a pre=("${arr[@]:0:$remove_index}")
+    local -a post=("${arr[@]:$((remove_index + 1))}")
+    arr=("${pre[@]}" "${post[@]}")
+    return 0
 }
 
 
