@@ -8,14 +8,14 @@ TEST_HELPER_DIR=test_helper
 	&& rm -rf "$BATSDIR"/.git
 }
 
-[[ -d $TEST_HELPER_DIR ]] || {
+[[ -d $TEST_HELPER_DIR/bats-support ]] || {
     mkdir -p "$TEST_HELPER_DIR" \
 	&& git clone https://github.com/bats-core/bats-support.git \
 	       test_helper/bats-support \
 	&& rm -rf "$TEST_HELPER_DIR"/bats-support/.git
 }
 
-[[ -d $TEST_HELPER_DIR ]] || {
+[[ -d $TEST_HELPER_DIR/bats-assert ]] || {
     mkdir -p "$TEST_HELPER_DIR" \
 	&& git clone https://github.com/bats-core/bats-assert.git \
 	       test_helper/bats-assert \
