@@ -298,11 +298,67 @@ ar::reverse() {
 }
 
 
-# @fn array_to_string
-# @brief Turn an array into a string with seperator
-# @param vname_of_array The variable name of the array
-# @param vname_of_string The variable name of the string
-# @param separator The optional separator to use. Defaults to IFS
+## @fn ar::set()
+## @brief Turn array into a set array (no duplicates)
+## @param arr The array to setify
+## @param arr_set The array to write the result into
+ar::set() {
+    local -n arr="$1"
+    local -A assoc
+    local -n arr_set="$2"
+    for val in "${arr[@]}"; do
+	assoc[$val]=1
+    done
+    arr_set=("${!assoc[@]}")
+}
+
+
+## @fn ar::set_in()
+## @brief Set membership
+## @param arr The array to search
+## @param needle The value to search for
+ar::in_set() {
+    local -n arr="$1"
+    local -A assoc
+    for val in "${arr[@]}"; do
+	assoc[$val]=1
+    done
+    [[ -v assoc["$2"] ]]
+}
+
+## @fn ar::punion()
+## @brief Print the union of two arrays
+## @detail Can be captured as an array with res=($(punion arr1 arr2))
+## @param arr1 The first array
+## @param arr2 The second array
+ar::punion() {
+  local -n arr1="$1"
+  local -n arr2="$2"
+  local -A union_assoc
+  local -a union_set
+
+  for val in "${arr1[@]}"; do
+    union_assoc[$val]=1
+  done
+
+  for val in "${arr2[@]}"; do
+    union_assoc[$val]=1
+  done
+
+  union_set=("${!union_assoc[@]}")
+  echo "${union_set[@]}"
+}
+
+## @fn ar::union()
+## @brief The union of two sets
+## @detail Write the union of two sets to the third varname
+
+
+## @fn array_to_string
+## @brief Turn an array into a string with seperator
+## @param vname_of_array The variable name of the array
+## @param vname_of_string The variable name of the string
+## @param separator The optional separator to use. Defaults to IFS
 ar::array_to_string() {
     (( ($# < 2) || ($# > 3) )) && {
 	echo "$FUNCNAME: usage: $FUNCNAME arrayname stringname [seperator]" >&2
