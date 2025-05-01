@@ -326,6 +326,31 @@ ar::in_set() {
     [[ -v assoc["$2"] ]]
 }
 
+
+## @fn ar::union()
+## @brief The union of two sets
+## @detail Write the union of two sets to the third varname
+## @param arr1 The first array
+## @param arr2 The second array
+## @param result_arr The resulting union array
+ar::union() {
+  local -n arr1="$1"
+  local -n arr2="$2"
+  local -n result_arr="$3"
+  local -A union_assoc
+
+  for val in "${arr1[@]}"; do
+    union_assoc[$val]=1
+  done
+
+  for val in "${arr2[@]}"; do
+    union_assoc[$val]=1
+  done
+
+  result_arr=("${!union_assoc[@]}")
+}
+
+
 ## @fn ar::punion()
 ## @brief Print the union of two arrays
 ## @detail Can be captured as an array with res=($(punion arr1 arr2))
@@ -348,10 +373,6 @@ ar::punion() {
   union_set=("${!union_assoc[@]}")
   echo "${union_set[@]}"
 }
-
-## @fn ar::union()
-## @brief The union of two sets
-## @detail Write the union of two sets to the third varname
 
 
 ## @fn array_to_string
