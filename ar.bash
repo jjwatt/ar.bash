@@ -332,11 +332,11 @@ ar::in_set() {
 ## @detail Write the union of two sets to the third varname
 ## @param arr1 The first array
 ## @param arr2 The second array
-## @param result_arr The resulting union array
+## @param union_set The resulting union array
 ar::union() {
   local -n arr1="$1"
   local -n arr2="$2"
-  local -n result_arr="$3"
+  local -n union_set="$3"
   local -A union_assoc
 
   for val in "${arr1[@]}"; do
@@ -347,7 +347,7 @@ ar::union() {
     union_assoc[$val]=1
   done
 
-  result_arr=("${!union_assoc[@]}")
+  union_set=("${!union_assoc[@]}")
 }
 
 
@@ -372,6 +372,32 @@ ar::punion() {
 
   union_set=("${!union_assoc[@]}")
   echo "${union_set[@]}"
+}
+
+
+## @fn ar::intersection
+## @brief The intersection of two arrays
+## @detail
+## @param arr1 The first array name
+## @param arr2 The second array name
+## @params intersect_arr The array name to write the result to
+ar::intersection() {
+    echo "Not Implemented Yet"
+    local -n arr1="$1"
+    local -n arr2="$2"
+    local -n intersect_arr="$3"
+    local -A assoc1
+    local -A intersect_assoc
+
+    for val in "${arr1[@]}"; do
+	assoc1["$val"]=1
+    done
+    for val in "${arr2[@]}"; do
+	if [[ -v assoc1["$val"] ]]; then
+	    intersect_assoc["$val"]=1
+	fi
+    done
+    intersect_arr=("${!intersect_assoc[@]}")
 }
 
 
