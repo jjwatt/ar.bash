@@ -35,7 +35,7 @@ setup() {
     ar::push expected salt pepper
     for ((i=0; i < arr_len; i++)); do
 	[[ ${_starting_array[i]} == "${expected[i]}" ]]
-    done    
+    done
 }
 
 @test "ar::index returns the index for the first occurence of value" {
@@ -62,4 +62,18 @@ setup() {
 @test "ar::remove fails with non-zero rc if value does not exist" {
     run ar::remove _starting_array beef
     [[ $status -eq 1 ]]
+}
+
+@test "ar::set turns an array into a set array" {
+    local expected_arr=(rice beans sausage)
+    local expected_len="${#expected_arr[@]}"
+    local starting_arr=(rice beans sausage rice)
+    local -a set_arr
+    ar::set starting_arr set_arr
+    local len="${#set_arr[@]}"
+    (( len == expected_len ))
+    # Order shouldn't matter
+    for ((i=0; i < arr_len; i++)); do
+	ar::in_set expected_arr "${set_arr[i]}"
+    done
 }

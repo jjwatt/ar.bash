@@ -299,7 +299,7 @@ ar::reverse() {
 
 
 ## @fn ar::set()
-## @brief Turn array into a set array (no duplicates)
+## @brief Create a set array from an array (no duplicates)
 ## @param arr The array to setify
 ## @param arr_set The array to write the result into
 ar::set() {
@@ -382,7 +382,6 @@ ar::punion() {
 ## @param arr2 The second array name
 ## @params intersect_arr The array name to write the result to
 ar::intersection() {
-    echo "Not Implemented Yet"
     local -n arr1="$1"
     local -n arr2="$2"
     local -n intersect_arr="$3"
