@@ -38,6 +38,11 @@ setup() {
     done
 }
 
+@test "ar::pop removes and returns an element from the end of the array" {
+    ar::pop _starting_array
+    [[ "${#_starting_array[@]}" == 2 ]]
+}
+
 @test "ar::index returns the index for the first occurence of value" {
     local i
     i="$(ar::index _starting_array sausage)"
@@ -52,6 +57,12 @@ setup() {
 @test "ar::index returns non-zero if an array index is out of bounds" {
     run ar::index _starting_array rice 4
     [[ $status -eq 2 ]]
+}
+
+@test "ar::extend appends items from the second array to the first array" {
+    local _second_array=(onions celery garlic)
+    ar::extend _starting_array _second_array
+    [[ "${_starting_array[*]}" == "rice beans sausage onions celery garlic" ]]
 }
 
 @test "ar::remove removes the first occurence of value from the array" {
