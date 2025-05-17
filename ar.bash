@@ -422,6 +422,40 @@ ar::difference() {
     difference_arr=("${!diff_assoc[@]}")
 }
 
+## @fn ar::symmetric_difference
+## @brief Write the symmetric difference between two sets to a third var
+## @detail Write elements are in either set but not their intersection
+## @param arr1 The first array name
+## @param arr2 The second array name
+## @params difference_arr The array name to write the result to
+ar::symmetric_difference() {
+    local -n arr1="$1"
+    local -n arr2="$2"
+    local -n symmetric_diff_arr="$3"
+    local -A assoc1 assoc2 symmetric_diff_assoc
+
+    for val in "${arr1[@]}"; do
+	assoc1["$val"]=1
+    done
+    for val in "${arr2[@]}"; do
+	assoc2["$val"]=1
+    done
+
+    # Find elements in arr1 but not arr2
+    for val in "${arr1[@]}"; do
+	if [[ ! -v assoc2["$val"] ]]; then
+	    symmetric_diff_assoc["$val"]=1
+	fi
+    done
+    # Find elements in arr2 but not arr1
+    for val in "${arr2[@]}"; do
+	if [[ ! -v assoc1["$val"] ]]; then
+	    symmetric_diff_assoc["$val"]=1
+	fi
+    done
+    symmetric_diff_arr=("${!symmetric_diff_assoc[@]}")
+}
+
 ## @fn array_to_string
 ## @brief Turn an array into a string with seperator
 ## @param vname_of_array The variable name of the array
