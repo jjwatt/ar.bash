@@ -304,8 +304,8 @@ ar::reverse() {
 ## @param arr_set The array to write the result into
 ar::set() {
     local -n arr="$1"
-    local -A assoc
     local -n arr_set="$2"
+    local -A assoc
     for val in "${arr[@]}"; do
 	assoc[$val]=1
     done
@@ -351,12 +351,12 @@ ar::union() {
 }
 
 
-## @fn ar::punion()
+## @fn ar::print_union()
 ## @brief Print the union of two arrays
 ## @detail Can be captured as an array with res=($(punion arr1 arr2))
 ## @param arr1 The first array
 ## @param arr2 The second array
-ar::punion() {
+ar::print_union() {
   local -n arr1="$1"
   local -n arr2="$2"
   local -A union_assoc
@@ -399,6 +399,28 @@ ar::intersection() {
     intersect_arr=("${!intersect_assoc[@]}")
 }
 
+## @fn ar::difference
+## @brief Write the difference between two sets to a third var
+## @detail Write elements that are in the first set but not the second.
+## @param arr1 The first array name
+## @param arr2 The second array name
+## @params difference_arr The array name to write the result to
+ar::difference() {
+    local -n arr1="$1"
+    local -n arr2="$2"
+    local -n difference_arr="$3"
+    local -A assoc2
+    local -A diff_assoc
+    for val in "${arr2[@]}"; do
+	assoc2["$val"]=1
+    done
+    for val in "${arr1[@]}"; do
+	if [[ ! -v assoc2["$val"] ]]; then
+	    diff_assoc["$val"]=1
+	fi
+    done
+    difference_arr=("${!diff_assoc[@]}")
+}
 
 ## @fn array_to_string
 ## @brief Turn an array into a string with seperator

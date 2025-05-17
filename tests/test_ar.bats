@@ -107,7 +107,7 @@ setup() {
     done
 }
 
-@test "ar::union returns the union of two sets" {
+@test "ar::union writes the union of two sets to a third var" {
     local -a first_arr=(rice beans sausage)
     local -a second_arr=(beef onions)
     local -i first_len="${#first_arr[@]}"
@@ -125,4 +125,21 @@ setup() {
 	ar::in_set union_arr "${second_arr[i]}"
 	[[ $status -eq 0 ]]
     done
+}
+
+@test "ar::intersection writes the intersection of two sets to a third var" {
+    local -a first_arr=(rice beans sausage)
+    local -a second_arr=(rice beef onions)
+    local -a intersection_arr
+    ar::intersection first_arr second_arr intersection_arr
+    assert_equal "${intersection_arr[0]}" "rice"
+}
+
+@test "ar::difference write the set difference of two sets to a third var" {
+    local -a first_arr=(rice beans sausage)
+    local -a second_arr=(rice beef onions)
+    local -a expected_diff=(beans sausage)
+    local -a diff_arr
+    ar::difference first_arr second_arr diff_arr
+    assert_equal "${diff_arr[*]}" "${expected_diff[*]}"
 }
