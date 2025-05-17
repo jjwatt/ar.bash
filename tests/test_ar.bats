@@ -135,11 +135,26 @@ setup() {
     assert_equal "${intersection_arr[0]}" "rice"
 }
 
-@test "ar::difference write the set difference of two sets to a third var" {
+@test "ar::difference writes the set difference of two sets to a third var" {
     local -a first_arr=(rice beans sausage)
     local -a second_arr=(rice beef onions)
     local -a expected_diff=(beans sausage)
     local -a diff_arr
     ar::difference first_arr second_arr diff_arr
     assert_equal "${diff_arr[*]}" "${expected_diff[*]}"
+}
+
+@test "ar::symmetric_difference writes the symmetric set difference of two sets to a third var" {
+    local -a first_arr=(rice beans sausage)
+    local -a second_arr=(rice beef onions)
+    local -a expected_diff=(beans sausage beef onions)
+    local -a diff_arr
+    ar::symmetric_difference first_arr second_arr diff_arr
+    # Order shouldn't matter
+    local -i expected_len="${#expected_diff[@]}"
+    local -i actual_len="${#diff_arr[@]}"
+    assert_equal "$expected_len" "$actual_len"
+    for ((i=0; i < expected_len; i++)); do
+	ar::in_set diff_arr "${expected_diff[i]}"
+    done
 }
