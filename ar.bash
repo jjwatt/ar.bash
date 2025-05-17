@@ -167,7 +167,7 @@ ar::insert() {
 
 
 ## @fn ar::index()
-## @brief Return the index of the first item in array whose needle is equal to the given value.
+## @brief Return the index of the first item in array equal to the given value.
 ## @detail Like Python's list.index(x[, start[, end]])
 ## Usage: ar::index arrayname needle [start [end]]
 ar::index() {
