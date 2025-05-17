@@ -72,7 +72,25 @@ setup() {
 
 @test "ar::remove fails with non-zero rc if value does not exist" {
     run ar::remove _starting_array beef
-    [[ $status -eq 1 ]]
+    assert_failure
+}
+
+@test "ar::count returns the number of times value appears in array" {
+    run ar::count _starting_array "rice"
+    assert_success
+    assert_output "1"
+
+    local _another_array=(rice beans rice sausage)
+    run ar::count _another_array "rice"
+    assert_success
+    assert_output "2"
+}
+
+@test "ar::reverse reverses an array in-place" {
+    local _starting_array=(rice beans sausage)
+    local _expected_reversed_array=(sausage beans rice)
+    ar::reverse _starting_array
+    assert_equal "${_starting_array[*]}" "${_expected_reversed_array[*]}"
 }
 
 @test "ar::set turns an array into a set array" {
@@ -86,5 +104,25 @@ setup() {
     # Order shouldn't matter
     for ((i=0; i < arr_len; i++)); do
 	ar::in_set expected_arr "${set_arr[i]}"
+    done
+}
+
+@test "ar::union returns the union of two sets" {
+    local -a first_arr=(rice beans sausage)
+    local -a second_arr=(beef onions)
+    local -i first_len="${#first_arr[@]}"
+    local -i second_len="${#second_arr[@]}"
+    local -i combined_len=$(( first_len + second_len ))
+    local -i i
+    local -a union_arr
+    ar::union first_arr second_arr union_arr
+    assert_equal "$combined_len" 5
+    for ((i=0; i < first_len; i++)); do
+	ar::in_set union_arr "${first_arr[i]}"
+	[[ $status -eq 0 ]]
+    done
+    for ((i=0; i < second_len; i++)); do
+	ar::in_set union_arr "${second_arr[i]}"
+	[[ $status -eq 0 ]]
     done
 }
