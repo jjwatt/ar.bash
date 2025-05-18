@@ -187,3 +187,49 @@ setup() {
     assert_failure
 }
 
+@test "ar::set_equal returns 0 if sets are equal" {
+    local -a first_arr=(rice beans sausage)
+    local -a second_arr=(rice beans sausage)
+    run ar::set_equal first_arr second_arr
+    assert_success
+
+    # Order shouldn't matter
+    local -a first_arr=(rice beans sausage)
+    local -a second_arr=(beans rice sausage)
+    run ar::set_equal first_arr second_arr
+    assert_success
+}
+
+@test "ar::set_equal should return non-zero if sets are not equal" {
+    local -a first_arr=(rice beans sausage beef)
+    local -a second_arr=(rice beans beef)
+    run ar::set_equal first_arr second_arr
+    assert_failure
+
+    local -a first_arr=(rice beans sausage)
+    local -a second_arr=(rice beans beef)
+    run ar::set_equal first_arr second_arr
+    assert_failure
+}
+
+@test "ar::is_proper_subset returns 0 if set1 is a proper subset of set2" {
+    local -a first_arr=(rice beans sausage)
+    local -a second_arr=(beans sausage)
+    run ar::is_proper_subset second_arr first_arr
+    assert_success
+
+    second_arr=(rice beans sausage)
+    run ar::is_proper_subset second_arr first_arr
+    assert_failure
+}
+
+@test "ar::is_proper_superset returns 0 if set1 is a proper superset of set2" {
+    local -a first_arr=(rice beans sausage)
+    local -a second_arr=(beans sausage)
+    run ar::is_proper_superset first_arr second_arr
+    assert_success
+
+    second_arr=(rice beans sausage)
+    run ar::is_proper_superset first_arr second_arr
+    assert_failure
+}
