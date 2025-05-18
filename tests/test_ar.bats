@@ -233,3 +233,17 @@ setup() {
     run ar::is_proper_superset first_arr second_arr
     assert_failure
 }
+
+@test "ar::is_disjoint returns 0 if set1 and set2 are disjoint" {
+    local -a first_arr=(rice beans sausage)
+    local -a second_arr=(beef pasta cheese)
+    run ar::is_disjoint first_arr second_arr
+    assert_success
+}
+
+@test "ar::is_disjoint returns non-zero if set1 and set2 are not disjoint" {
+    local -a first_arr=(rice beans sausage)
+    local -a second_arr=(rice beef beans)
+    run ar::is_disjoint first_arr second_arr
+    assert_failure
+}

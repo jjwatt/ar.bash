@@ -303,13 +303,13 @@ ar::reverse() {
 ## @param arr The array to setify
 ## @param arr_set The array to write the result into
 ar::set() {
-    local -n arr="$1"
-    local -n arr_set="$2"
-    local -A assoc
-    for val in "${arr[@]}"; do
-	assoc[$val]=1
+    local -n _set_arr="$1"
+    local -n _set_arr_set="$2"
+    local -A _set_assoc
+    for val in "${_set_arr[@]}"; do
+	_set_assoc[$val]=1
     done
-    arr_set=("${!assoc[@]}")
+    _set_arr_set=("${!_set_assoc[@]}")
 }
 
 ## @fn ar::in_set()
@@ -501,7 +501,7 @@ ar::is_proper_subset() {
 }
 
 ## @fn ar::is_proper_superset
-## @brief Return true if _proper_superset_arr1 is a superset of _proper_superset_arr2
+## @brief Return 0 if _proper_superset_arr1 is a superset of _proper_superset_arr2
 ## @param _proper_superset_arr1 The first array name
 ## @param _proper_superset_arr2 The second array name
 ## @retval 0 if _proper_superset_arr1 is a superset of _proper_superset_arr2, non-zero otherwise
@@ -518,6 +518,23 @@ ar::is_proper_superset() {
     done
     return 0
 }
+
+## @fn ar::is_disjoint
+## @brief Return 0 if _disjoint_arr1 is a superset of _disjoint_arr2
+## @param _disjoint_arr1 The first array name
+## @param _disjoint_arr2 The second array name
+## @retval 0 if _disjoint_arr1 and _disjoint_arr2 are disjoint sets, non-zero otherwise
+ar::is_disjoint() {
+    local -n _disjoint_arr1="$1"
+    local -n _disjoint_arr2="$2"
+    for i in "${_disjoint_arr1[@]}"; do
+	if ar::in_set _disjoint_arr2 "$i"; then
+	    return 1
+	fi
+    done
+    return 0
+}
+
 
 ## @fn array_to_string
 ## @brief Turn an array into a string with seperator
