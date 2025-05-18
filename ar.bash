@@ -313,7 +313,7 @@ ar::set() {
 }
 
 
-## @fn ar::set_in()
+## @fn ar::in_set()
 ## @brief Set membership
 ## @param arr The array to search
 ## @param needle The value to search for
@@ -454,6 +454,38 @@ ar::symmetric_difference() {
 	fi
     done
     symmetric_diff_arr=("${!symmetric_diff_assoc[@]}")
+}
+
+## @fn ar::is_subset
+## @brief Return true if arr1 is a subset of arr2
+## @param arr1 The first array name
+## @param arr2 The second array name
+## @retval 0 if arr1 is a subset of arr2, non-zero otherwise
+ar::is_subset() {
+    local -n arr1="$1"
+    local -n arr2="$2"
+    for i in "${arr1[@]}"; do
+	if ! ar::in_set arr2 "$i"; then
+	    return 1
+        fi
+    done
+    return 0
+}
+
+## @fn ar::is_superset
+## @brief Return true if arr1 is a superset of arr2
+## @param arr1 The first array name
+## @param arr2 The second array name
+## @retval 0 if arr1 is a superset of arr2, non-zero otherwise
+ar::is_superset() {
+    local -n arr1="$1"
+    local -n arr2="$2"
+    for i in "${arr2[@]}"; do
+	if ! ar::in_set arr1 "$i"; then
+	    return 1
+        fi
+    done
+    return 0
 }
 
 ## @fn array_to_string
