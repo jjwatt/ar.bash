@@ -312,18 +312,36 @@ ar::set() {
     arr_set=("${!assoc[@]}")
 }
 
-
 ## @fn ar::in_set()
 ## @brief Set membership
-## @param arr The array to search
+## @param _in_set_arr The array to search
 ## @param needle The value to search for
 ar::in_set() {
-    local -n arr="$1"
+    local -n _in_set_arr="$1"
     local -A assoc
-    for val in "${arr[@]}"; do
+    for val in "${_in_set_arr[@]}"; do
 	assoc[$val]=1
     done
     [[ -v assoc["$2"] ]]
+}
+
+## @fn ar::set_equal()
+## @brief Set equality
+## @param _set_equal_arr1 The first set
+## @param _set_equal_arr2 The second set
+## @retval 0 if sets are equal, 1 otherwise
+ar::set_equal() {
+    local -n _set_equal_arr1="$1"
+    local -n _set_equal_arr2="$2"
+    if [[ ${#_set_equal_arr2[@]} != ${#_set_equal_arr1[@]} ]]; then
+	return 1
+    fi
+    for val in "${_set_equal_arr1[@]}"; do
+	if ! ar::in_set _set_equal_arr2 "$val"; then
+	    return 1
+	fi
+    done
+    return 0
 }
 
 
@@ -349,31 +367,6 @@ ar::union() {
 
   union_set=("${!union_assoc[@]}")
 }
-
-
-## @fn ar::print_union()
-## @brief Print the union of two arrays
-## @detail Can be captured as an array with res=($(punion arr1 arr2))
-## @param arr1 The first array
-## @param arr2 The second array
-ar::print_union() {
-  local -n arr1="$1"
-  local -n arr2="$2"
-  local -A union_assoc
-  local -a union_set
-
-  for val in "${arr1[@]}"; do
-    union_assoc[$val]=1
-  done
-
-  for val in "${arr2[@]}"; do
-    union_assoc[$val]=1
-  done
-
-  union_set=("${!union_assoc[@]}")
-  echo "${union_set[@]}"
-}
-
 
 ## @fn ar::intersection
 ## @brief The intersection of two arrays
@@ -482,6 +475,44 @@ ar::is_superset() {
     local -n arr2="$2"
     for i in "${arr2[@]}"; do
 	if ! ar::in_set arr1 "$i"; then
+	    return 1
+        fi
+    done
+    return 0
+}
+
+## @fn ar::is_proper_subset
+## @brief Return true if arr1 is a proper subset of arr2
+## @param arr1 The first array name
+## @param _arr2 The second array name
+## @retval 0 if arr1 is a proper subset of arr2, non-zero otherwise
+ar::is_proper_subset() {
+    local -n _proper_subset_arr1="$1"
+    local -n _proper_subset_arr2="$2"
+    if ar::set_equal _proper_subset_arr1 _proper_subset_arr2; then
+	return 1
+    fi
+    for i in "${_proper_subset_arr1[@]}"; do
+	if ! ar::in_set _proper_subset_arr2 "$i"; then
+	    return 1
+        fi
+    done
+    return 0
+}
+
+## @fn ar::is_proper_superset
+## @brief Return true if _proper_superset_arr1 is a superset of _proper_superset_arr2
+## @param _proper_superset_arr1 The first array name
+## @param _proper_superset_arr2 The second array name
+## @retval 0 if _proper_superset_arr1 is a superset of _proper_superset_arr2, non-zero otherwise
+ar::is_proper_superset() {
+    local -n _proper_superset_arr1="$1"
+    local -n _proper_superset_arr2="$2"
+    if ar::set_equal _proper_superset_arr1 _proper_superset_arr2; then
+	return 1
+    fi
+    for i in "${_proper_superset_arr2[@]}"; do
+	if ! ar::in_set _proper_superset_arr1 "$i"; then
 	    return 1
         fi
     done
