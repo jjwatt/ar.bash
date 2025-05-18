@@ -158,3 +158,32 @@ setup() {
 	ar::in_set diff_arr "${expected_diff[i]}"
     done
 }
+
+@test "ar::is_subset returns 0 if set1 is a subset of set2" {
+    local -a first_arr=(rice beans sausage)
+    local -a second_arr=(beans sausage)
+    run ar::is_subset second_arr first_arr
+    assert_success
+}
+
+@test "ar::is_subset returns non-zero if set1 is not a subset of set2" {
+    local -a first_arr=(rice beans sausage)
+    local -a second_arr=(beans sausage pasta)
+    run ar::is_subset second_arr first_arr
+    assert_failure
+}
+
+@test "ar::is_superset returns 0 if set1 is a superset of set2" {
+    local -a first_arr=(rice beans sausage)
+    local -a second_arr=(beans sausage)
+    run ar::is_superset first_arr second_arr
+    assert_success
+}
+
+@test "ar::is_superset returns non-zero if set1 is not a superset of set2" {
+    local -a first_arr=(rice beans sausage)
+    local -a second_arr=(beans sausage pasta)
+    run ar::is_superset first_arr second_arr
+    assert_failure
+}
+
